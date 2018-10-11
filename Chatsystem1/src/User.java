@@ -1,3 +1,4 @@
+import java.awt.*;
 import java.io.*;
 import java.net.*;
 import java.util.*;
@@ -14,11 +15,18 @@ public class User {
     private String serverHost;
     private int serverPort;
 
+    private User(String userName, String host, int portNumber){
+        this.userName = userName;
+        this.serverHost = host;
+        this.serverPort = portNumber;
+    }
+
     public static void main(String[] args) throws Exception{
         Set<String> userName = new HashSet<>();
         String readName = "";
         String name = "";
         Scanner scan = new Scanner(System.in);
+        System.out.println("Vigtige protokoler i chatten: \n JOIN: deltag i chatten \n IMAV: Giv besked på du stadig er aktiv");
         System.out.println("Indtast JOIN for at forbinde til chatten");
         if(readName == null || readName.trim().equals("")){
 
@@ -30,8 +38,7 @@ public class User {
                 name = scan1.nextLine();
 
             }
-            }
-
+        }
 
             /*if(readName.trim().equals("")){
                 System.out.println("Ugyldigt Brugernavn. Skriv det ind igen:");
@@ -39,12 +46,6 @@ public class User {
         User client = new User(name, host, portNumber);
         client.startClient(scan);
 
-    }
-
-    private User(String userName, String host, int portNumber){
-        this.userName = userName;
-        this.serverHost = host;
-        this.serverPort = portNumber;
     }
 
     public String getUserName() {
@@ -67,18 +68,16 @@ public class User {
 
 
                 if(scan.hasNextLine()){
-                    if (scan.hasNext("quit")){
+                    if(scan.hasNext("IMAV")){
+                        System.out.println(userName + " is still here");
+                    }
+                    if (scan.hasNext("quit") || scan.hasNext("QUIT") || scan.hasNext("Quit")){
                         socket.close();
                         throw new InterruptedException();
                     }
                     serverThread.addMessageToSend(scan.nextLine());
                 }
-                // NOTE: scan.hasNextLine waits input (in the other words block this thread's process).
-                // NOTE: If you use buffered reader or something else not waiting way,
-                // NOTE: I recommends write waiting short time like following.
-                // else {
-                //    Thread.sleep(200);
-                // }
+
             }
         }catch(IOException ex){
             System.err.println("Fatal Connection error!");
