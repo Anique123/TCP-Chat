@@ -8,6 +8,7 @@ public class UserThread implements Runnable {
     private PrintWriter userOut;
     private ChatServer server;
 
+    //Kører kun hvis der en server fra chatserver klassen
     public UserThread(ChatServer server, Socket socket){
         this.server = server;
         this.socket = socket;
@@ -22,19 +23,18 @@ public class UserThread implements Runnable {
         try{
             // sætter op kommunikation måder
             this.userOut = new PrintWriter(socket.getOutputStream(), false);
-            Scanner in = new Scanner(socket.getInputStream());
+            Scanner input = new Scanner(socket.getInputStream());
 
             // starter kommunikationen
             while(!socket.isClosed()){
-                if(in.hasNextLine()){
-                    String input = in.nextLine();
-                    // NOTE: if you want to check server can read input, uncomment next line and check server file console.
-                    // System.out.println(input);
+                if(input.hasNextLine()){
+                    String in = input.nextLine();
+
 
                     for(UserThread thatClient : server.getUsers()){
                         PrintWriter thatClientOut = thatClient.getWriter();
                         if(thatClientOut != null){
-                            thatClientOut.write(input + "\r\n");
+                            thatClientOut.write(in + "\r\n");
                             thatClientOut.flush();
                         }
                     }
